@@ -53,6 +53,7 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+CMakeFiles/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -428,3 +429,6 @@ FodyWeavers.xsd
 .VSCodeCounter/
 Crashes/
 TestData/
+
+AndroidStudio/.idea
+build/
