@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 3.10)
 
 project(ImperialEngine2 LANGUAGES CXX)
 
-add_library(imperial_engine SHARED Source/Engine.cpp)
+add_library(imperial_engine SHARED  Source/Engine.cpp
+                                    Source/Layers.cpp
+                                    Source/Log.h)
 
 set_target_properties(imperial_engine PROPERTIES
     CXX_STANDARD 20
