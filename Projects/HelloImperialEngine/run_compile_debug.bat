@@ -6,6 +6,6 @@ cmake -S . -B build ^
   -D CMAKE_BUILD_TYPE=Debug ^
   -G Ninja
 
-cmake --build build
+cmake --build build -- -v
 
 pause

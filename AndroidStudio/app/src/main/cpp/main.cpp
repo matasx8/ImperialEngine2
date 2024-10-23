@@ -95,6 +95,9 @@ void android_main(struct android_app *pApp)
 {
     pApp->onAppCmd = HandleCmd;
 
+    // TODO: Probably don't want to dynamically load the library. If we don't have to do anything here but launch "main" then it should be OK.
+    // But likely we will require more interface from application for window and etc. management.
+    // Then I should look into exporting the necessary project info into AndroidStudio folder so I get headers and etc.
     void* handle = dlopen("libapplication.so", RTLD_LAZY);
     if (!handle)
     {

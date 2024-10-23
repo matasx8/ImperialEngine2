@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.22.1)
 
-project(UGKTests)
+project(ImperialEngine)
 set(BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../")
 
 function(map_build_type INPUT OUTPUT)
@@ -33,10 +33,12 @@ add_library(native_app_glue STATIC
 target_include_directories(native_app_glue PUBLIC
         ${ANDROID_NDK}/sources/android/native_app_glue)
 
-add_library(imperial_engine SHARED IMPORTED)
-set_target_properties(imperial_engine PROPERTIES
-        IMPORTED_LOCATION ${BASE_DIR}/build/${CMAKE_BUILD_TYPE}/${SYSTEM_ARCH}/libimperial_engine.so
+add_library(application SHARED IMPORTED)
+set_target_properties(application PROPERTIES
+        IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/../jniLibs/${SYSTEM_ARCH}/libapplication.so
         IMPORTED_LINK_INTERFACE_LANGUAGES CXX)
+
+# TODO: add library for application but don't link it. Building an application project should copy the includes or something like that so AndroidStudio knows which project to use
 
 find_library(log-lib log)
 
@@ -45,5 +47,5 @@ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -u ANativeActivity_o
 target_link_libraries(native-activity
         android
         native_app_glue
-        imperial_engine
+        application
         ${log-lib})

@@ -20,11 +20,24 @@ add_custom_command(TARGET application POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_ANDROID_ARCH_ABI}/libapplication.so"
         "${SECONDARY_OUTPUT_DIR}/libapplication.so"
-    COMMENT "Copying libapplication.so to ${SECONDARY_OUTPUT_DIR}"
+    COMMAND ${CMAKE_COMMAND} -E copy
+        "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${CMAKE_ANDROID_ARCH_ABI}/libimperial_engine.so"
+        "${SECONDARY_OUTPUT_DIR}/libimperial_engine.so"
+    COMMENT "Copying libapplication.so and libimperial_engine.so to ${SECONDARY_OUTPUT_DIR}"
 )
 
+add_subdirectory("${CMAKE_SOURCE_DIR}/../../" "${CMAKE_SOURCE_DIR}/../../build/${CMAKE_BUILD_TYPE}/${CMAKE_ANDROID_ARCH_ABI}")
 target_include_directories(application PUBLIC "../../Source")
-target_link_libraries(application PUBLIC "${CMAKE_BINARY_DIR}/../../../build/${CMAKE_BUILD_TYPE}/${CMAKE_ANDROID_ARCH_ABI}/libimperial_engine.so")
+target_link_directories(application PUBLIC "${CMAKE_BINARY_DIR}/../../../build/${CMAKE_BUILD_TYPE}/${CMAKE_ANDROID_ARCH_ABI}")
+target_link_libraries(application PUBLIC imperial_engine)
+
+get_target_property(application_includes application INCLUDE_DIRECTORIES)
+message(STATUS "Application include directories: ${application_includes}")
+
+# For some reason imperial_engine does not export volk include directories
+target_include_directories(application PUBLIC "${CMAKE_SOURCE_DIR}/../../External/Volk")
+
+#target_link_libraries(application PUBLIC "${CMAKE_BINARY_DIR}/../../../build/${CMAKE_BUILD_TYPE}/${CMAKE_ANDROID_ARCH_ABI}/libimperial_engine.so")
 
 find_library(log-lib log)
 target_link_libraries(application PUBLIC ${log-lib})

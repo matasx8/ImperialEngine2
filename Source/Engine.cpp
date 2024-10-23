@@ -2,8 +2,17 @@
 
 namespace imp
 {
-    int Add(int a, int b) 
+    Engine::Engine()
     {
-        return a + b;
+    }
+
+    VkResult Engine::InitializeEngine(const void* pNext)
+    {
+        return volkInitialize();
+    }
+
+    VkResult Engine::ShutdownEngine(const void* pNext)
+    {
+        return VK_SUCCESS;
     }
 }
