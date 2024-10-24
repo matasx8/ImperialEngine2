@@ -5,6 +5,7 @@ project(ImperialEngine2 LANGUAGES CXX)
 add_library(imperial_engine SHARED  Source/Engine.cpp
                                     Source/Layers.cpp
                                     Source/Debug.cpp
+                                    Source/Queue.cpp
                                     Source/Log.h)
 
 set_target_properties(imperial_engine PROPERTIES

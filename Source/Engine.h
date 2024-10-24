@@ -1,6 +1,7 @@
 #pragma once
 #include "volk.h"
 #include "Log.h"
+#include "Queue.h"
 
 #include <vector>
 #include <string>
@@ -16,7 +17,7 @@ namespace imp
     class Engine
     {
     public:
-        Engine();
+        Engine() = default;
 
         VkResult InitializeEngine(const EngineCreateParams& params);
         VkResult ShutdownEngine();
@@ -33,5 +34,7 @@ namespace imp
 
         std::vector<std::string> m_EnabledInstanceLayers = {};
         std::vector<std::string> m_EnabledInstanceExtensions = {};
+
+        Queue m_Queue = {};
     };   
 }

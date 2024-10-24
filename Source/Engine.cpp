@@ -8,10 +8,6 @@
 
 namespace imp
 {
-    Engine::Engine()
-    {
-    }
-
     VkResult Engine::InitializeEngine(const EngineCreateParams& params)
     {
         if (params.platformLogFunc)
@@ -41,8 +37,7 @@ namespace imp
             return result;
         g_Log("Vulkan Physical Device was successfully created.");
 
-
-
+        m_Queue.Initialize(m_PhysicalDevice);
         return result;
     }
 

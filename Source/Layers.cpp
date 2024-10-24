@@ -73,3 +73,34 @@ VkResult imp::GetInstanceExtensions(const std::vector<std::string>& enabledLayer
 
     return VK_SUCCESS;
 }
+
+VkResult imp::CheckAllRequiredExtensionsSupported(VkPhysicalDevice device)
+{
+    std::vector<VkExtensionProperties> props;
+    uint32_t extensionPropertyCount = 0;
+
+    VkResult result = vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionPropertyCount, nullptr);
+    if (result != VK_SUCCESS)
+        return result;
+
+    props.resize(extensionPropertyCount);
+    result = vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionPropertyCount, props.data());
+
+    int count = 0;
+    for (const auto& prop : props)
+    {
+        for (size_t i = 0; i < g_RequiredDeviceExtensions.size(); i++)
+        {
+            if (strcmp(prop.extensionName, g_RequiredDeviceExtensions[i]) == 0)
+            {
+                count++;
+                break;
+            }
+        }
+    }
+
+    if (count == g_RequiredDeviceExtensions.size())
+        return VK_SUCCESS;
+
+    return VK_ERROR_INITIALIZATION_FAILED;
+}
