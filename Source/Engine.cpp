@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include "Layers.h"
+#include "Debug.h"
 
 #include <vector>
 #include <algorithm>
@@ -28,16 +29,26 @@ namespace imp
 
         volkLoadInstance(m_Instance);
 
+        if (ShouldInitDebugger(m_EnabledInstanceLayers, m_EnabledInstanceExtensions))
+        {
+            VkResult res = InitializeDebugger(m_Instance);
+            if (res != VK_SUCCESS)
+                g_Log("Vulkan debugger was not initialized. Return code: %d\n", res);
+        }
+
         result = SelectPhysicalDevice(params);
         if (result != VK_SUCCESS)
             return result;
         g_Log("Vulkan Physical Device was successfully created.");
+
+
 
         return result;
     }
 
     VkResult Engine::ShutdownEngine()
     {
+        DestroyDebugger(m_Instance);
         DestroyInstance();
         return VK_SUCCESS;
     }
@@ -54,31 +65,29 @@ namespace imp
         createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         createInfo.pApplicationInfo = &appInfo;
 
-        std::vector<std::string> layers;
-        VkResult result = GetInstanceLayers(layers);
+        VkResult result = GetInstanceLayers(m_EnabledInstanceLayers);
         if (result != VK_SUCCESS)
             return result;
 
-        std::vector<std::string> actualExtensions;
         std::vector<const char*> preferredExtensions = g_PreferredInstanceExtensions; // TODO: can use pNext to request instance extensions, though not implemented yet
-        result = GetInstanceExtensions(layers, preferredExtensions, actualExtensions);
+        result = GetInstanceExtensions(m_EnabledInstanceLayers, preferredExtensions, m_EnabledInstanceExtensions);
         if (result != VK_SUCCESS)
             return result;
 
-        for (const auto& layer : layers)
+        for (const auto& layer : m_EnabledInstanceLayers)
             g_Log("Will enable layer: %s\n", layer.c_str());
 
-        for (const auto& extension : actualExtensions)
+        for (const auto& extension : m_EnabledInstanceExtensions)
             g_Log("Will enable instance extension: %s\n", extension.c_str());
 
-        createInfo.enabledLayerCount = static_cast<uint32_t>(layers.size());
-        std::vector<const char*> layerNames(layers.size());
-        std::transform(layers.begin(), layers.end(), layerNames.begin(), [](const std::string& str) { return str.c_str(); });
+        createInfo.enabledLayerCount = static_cast<uint32_t>(m_EnabledInstanceLayers.size());
+        std::vector<const char*> layerNames(m_EnabledInstanceLayers.size());
+        std::transform(m_EnabledInstanceLayers.begin(), m_EnabledInstanceLayers.end(), layerNames.begin(), [](const std::string& str) { return str.c_str(); });
         createInfo.ppEnabledLayerNames = layerNames.data();
 
-        createInfo.enabledExtensionCount = static_cast<uint32_t>(actualExtensions.size());
-        std::vector<const char*> extensionNames(actualExtensions.size());
-        std::transform(actualExtensions.begin(), actualExtensions.end(), extensionNames.begin(), [](const std::string& str) { return str.c_str(); });
+        createInfo.enabledExtensionCount = static_cast<uint32_t>(m_EnabledInstanceExtensions.size());
+        std::vector<const char*> extensionNames(m_EnabledInstanceExtensions.size());
+        std::transform(m_EnabledInstanceExtensions.begin(), m_EnabledInstanceExtensions.end(), extensionNames.begin(), [](const std::string& str) { return str.c_str(); });
         createInfo.ppEnabledExtensionNames = extensionNames.data();
 
         result = vkCreateInstance(&createInfo, nullptr, &m_Instance);

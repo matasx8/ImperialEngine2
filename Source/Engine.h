@@ -1,7 +1,9 @@
 #pragma once
 #include "volk.h"
 #include "Log.h"
-//#include "vulkan/vulkan.h"
+
+#include <vector>
+#include <string>
 
 namespace imp
 {
@@ -28,5 +30,8 @@ namespace imp
 
         VkInstance m_Instance = VK_NULL_HANDLE;
         VkPhysicalDevice m_PhysicalDevice = VK_NULL_HANDLE;
+
+        std::vector<std::string> m_EnabledInstanceLayers = {};
+        std::vector<std::string> m_EnabledInstanceExtensions = {};
     };   
 }
