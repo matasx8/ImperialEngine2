@@ -24,5 +24,7 @@ namespace imp
 		VkQueue m_ComputeQ = VK_NULL_HANDLE;
 
 		QueueFamilyIndices m_QueueFamilyIndices = {};
+
+		VkDevice m_Device = VK_NULL_HANDLE;
 	};
 }
