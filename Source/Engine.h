@@ -19,8 +19,8 @@ namespace imp
     public:
         Engine() = default;
 
-        VkResult InitializeEngine(const EngineCreateParams& params);
-        VkResult ShutdownEngine();
+        VkResult Initialize(const EngineCreateParams& params);
+        VkResult Shutdown();
         
     private:
 

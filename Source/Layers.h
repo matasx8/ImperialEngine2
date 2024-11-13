@@ -8,9 +8,10 @@
 namespace imp
 {
 	inline static constexpr std::initializer_list<const char*> g_PreferredInstanceExtensions { VK_EXT_DEBUG_UTILS_EXTENSION_NAME };
-	inline static constexpr std::array<const char*, 2> g_RequiredDeviceExtensions =
+	inline static constexpr std::array<const char*, 1> g_RequiredDeviceExtensions =
 	{
-		VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+		// TODO: use Windowing system to request swapchain extension
+		//VK_KHR_SWAPCHAIN_EXTENSION_NAME,
 		VK_KHR_DRAW_INDIRECT_COUNT_EXTENSION_NAME
 	};
 

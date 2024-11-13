@@ -20,7 +20,7 @@ int main(int argc, char** args)
     imp::EngineCreateParams createParams {};
     createParams.platformLogFunc = LogPrintWrapper;
     imp::Engine engine {};
-    VkResult result = engine.InitializeEngine(createParams);
+    VkResult result = engine.Initialize(createParams);
 
     LogPrintWrapper("Result from initializing engine: %d\n", result);
 

@@ -8,7 +8,7 @@
 
 namespace imp
 {
-    VkResult Engine::InitializeEngine(const EngineCreateParams& params)
+    VkResult Engine::Initialize(const EngineCreateParams& params)
     {
         if (params.platformLogFunc)
             g_Log = params.platformLogFunc;
@@ -41,11 +41,14 @@ namespace imp
         return result;
     }
 
-    VkResult Engine::ShutdownEngine()
+    VkResult Engine::Shutdown()
     {
+        VkResult result;
+
+        result = m_Queue.ShutDown();
         DestroyDebugger(m_Instance);
         DestroyInstance();
-        return VK_SUCCESS;
+        return result;
     }
 
     VkResult Engine::CreateInstance(const EngineCreateParams& params)

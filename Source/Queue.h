@@ -15,10 +15,12 @@ namespace imp
 		Queue() = default;
 
 		VkResult Initialize(VkPhysicalDevice physicalDevice);
+		VkResult ShutDown();
 
 	private:
 
 		VkResult FindQueueFamilies(VkPhysicalDevice physicalDevice);
+		VkResult AquireDeviceQueues();
 
 		VkQueue m_GraphicsQ = VK_NULL_HANDLE;
 		VkQueue m_ComputeQ = VK_NULL_HANDLE;
