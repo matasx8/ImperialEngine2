@@ -5,6 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include <iterator>
+#include <set>
 
 namespace imp
 {
@@ -38,6 +39,25 @@ namespace imp
         g_Log("Vulkan Physical Device was successfully created.");
 
         m_Queue.Initialize(m_PhysicalDevice);
+
+        volkLoadDevice(m_Queue.GetDevice());
+
+        m_GraphicsCommandPool = new CommandBufferPool();
+        result = m_GraphicsCommandPool->Initialize(m_Queue.GetDevice());
+
+        const auto& queueFamilyIndices = m_Queue.GetQueueFamilyIndices();
+        if (queueFamilyIndices.graphicsFamily == queueFamilyIndices.computeFamily)
+        {
+            m_ComputeCommandPool = m_GraphicsCommandPool;
+        }
+        else
+        {
+            m_ComputeCommandPool = new CommandBufferPool();
+            result = m_ComputeCommandPool->Initialize(m_Queue.GetDevice());
+        }
+
+        result = m_SubmitSyncManager.Initialize(m_Queue.GetDevice());
+
         return result;
     }
 
@@ -45,10 +65,74 @@ namespace imp
     {
         VkResult result;
 
+        result = m_SubmitSyncManager.Shutdown(m_Queue.GetDevice());
+        result = m_GraphicsCommandPool->Shutdown(m_Queue.GetDevice());
+        if (m_GraphicsCommandPool == m_ComputeCommandPool)
+        {
+            m_ComputeCommandPool->Shutdown(m_Queue.GetDevice());
+            delete m_ComputeCommandPool;
+        }
+        delete m_GraphicsCommandPool;
+
         result = m_Queue.ShutDown();
         DestroyDebugger(m_Instance);
         DestroyInstance();
         return result;
+    }
+
+    SubmitSync Engine::Submit(const SubmitParams* pParams, uint32_t paramsCount)
+    {
+        uint32_t numUniqueQueues = 1;
+        if (paramsCount > 1)
+        {
+            std::set<VkQueue> uniqueQueues;
+            for (uint32_t i = 0; i < paramsCount; i++)
+            {
+                uniqueQueues.insert(pParams[i].queue);
+            }
+            numUniqueQueues = uniqueQueues.size();
+        }
+
+        if (numUniqueQueues > 1)
+        {
+            // !HERE: continue here
+            // submit empty queue that waits for 1 dependency and signals numUniqueueQueues dependencies
+
+            // then do the regular submits
+
+            // then submit empty queue that waits for numUniqueueQueues dependencies and signals one
+
+            // we get this forking dependency thingy that allows submission to parallel queues
+
+
+        }
+        std::vector<VkSubmitInfo> submits;
+        submits.resize(paramsCount);
+
+        for (uint32_t i = 0; i < paramsCount; i++)
+        {
+            auto& si = submits[i];
+            si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+            si.waitSemaphoreCount = 0;
+            si.pWaitSemaphores = nullptr;
+            si.pWaitDstStageMask = nullptr;
+            si.pSignalSemaphores = nullptr;
+            si.commandBufferCount = 0;
+            si.pCommandBuffers = nullptr;
+        }
+
+        // TODO: need to group by queue
+        VkFence fence;
+        VkResult result = vkQueueSubmit(pParams->queue, 1, submits.data(), fence);
+        if (result != VK_SUCCESS)
+            g_Log("Failed to submit to Queue with result: %d\n", result);
+
+        return SubmitSync();
+    }
+
+    VkResult Engine::WaitForSubmitSync(const SubmitSync& sync, uint64_t timeout)
+    {
+        return VkResult();
     }
 
     VkResult Engine::CreateInstance(const EngineCreateParams& params)

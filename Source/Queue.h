@@ -17,6 +17,9 @@ namespace imp
 		VkResult Initialize(VkPhysicalDevice physicalDevice);
 		VkResult ShutDown();
 
+		inline VkDevice GetDevice() const { return m_Device; }
+		inline const QueueFamilyIndices& GetQueueFamilyIndices() const { return m_QueueFamilyIndices; }
+
 	private:
 
 		VkResult FindQueueFamilies(VkPhysicalDevice physicalDevice);

@@ -4,6 +4,7 @@ cmake -S . -B build ^
   -D ANDROID_ABI=arm64-v8a ^
   -D CMAKE_ANDROID_ARCH_ABI=arm64-v8a ^
   -D CMAKE_BUILD_TYPE=Debug ^
+  -D CMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE ^
   -G Ninja
 
 cmake --build build

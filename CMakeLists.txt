@@ -2,10 +2,15 @@ cmake_minimum_required(VERSION 3.10)
 
 project(ImperialEngine2 LANGUAGES CXX)
 
+file(GLOB SOURCE_FILES "Source/*.cpp")
+message(STATUS "Source files found: ${SOURCE_FILES}")
+
 add_library(imperial_engine SHARED  Source/Engine.cpp
                                     Source/Layers.cpp
                                     Source/Debug.cpp
                                     Source/Queue.cpp
+				    Source/CommandBufferPool.cpp
+                                    Source/SubmitSyncManager.cpp
                                     Source/Log.h)
 
 set_target_properties(imperial_engine PROPERTIES

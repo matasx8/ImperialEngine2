@@ -24,6 +24,8 @@ int main(int argc, char** args)
 
     LogPrintWrapper("Result from initializing engine: %d\n", result);
 
+    SubmitSync sync = engine.Submit();
+    engine.WaitForSubmitSync(sync);
 
     return result;
 }
